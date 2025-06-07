@@ -9,7 +9,8 @@ terraform {
 
 # Configure the AWS Provider
 provider "aws" {
-  region = "us-east-1"  # You can change this to your preferred region
+  region  = "us-east-1"  # You can change this to your preferred region
+  profile = "wisebeanz"  # This will use the named profile from your AWS credentials
 }
 
 # Create an IAM role for Amplify
@@ -23,7 +24,7 @@ resource "aws_iam_role" "amplify_role" {
         Action = "sts:AssumeRole"
         Effect = "Allow"
         Principal = {
-          Service = "amplify.amazonaws.com"
+          Service = ["amplify.amazonaws.com", "amplify.us-east-1.amazonaws.com"]
         }
       }
     ]
@@ -51,7 +52,18 @@ resource "aws_iam_role_policy" "amplify_policy" {
           "s3:CreateBucket",
           "s3:DeleteBucket",
           "s3:PutBucketPolicy",
-          "s3:PutBucketWebsite"
+          "s3:PutBucketWebsite",
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject",
+          "s3:ListBucket",
+          "iam:PassRole",
+          "iam:ListRoles",
+          "iam:GetRole",
+          "iam:CreateRole",
+          "iam:DeleteRole",
+          "iam:PutRolePolicy",
+          "iam:DeleteRolePolicy"
         ]
         Resource = "*"
       }
@@ -62,7 +74,10 @@ resource "aws_iam_role_policy" "amplify_policy" {
 # Create the Amplify app
 resource "aws_amplify_app" "web_app" {
   name         = "wisebeanz"
-  repository   = "https://github.com/caelumterrae/wisebeanz"  # Replace with your repository URL
+  repository   = "https://github.com/CaelumTerrae/wisebeanz"
+  
+  # Add GitHub token
+  access_token = var.github_access_token
   
   # Enable auto branch creation
   enable_auto_branch_creation = true
@@ -75,22 +90,24 @@ resource "aws_amplify_app" "web_app" {
       phases:
         preBuild:
           commands:
-            - npm install
+            - npm ci
         build:
           commands:
             - npm run build
       artifacts:
-        baseDirectory: build
+        baseDirectory: out
         files:
           - '**/*'
       cache:
         paths:
           - node_modules/**/*
+          - .next/cache/**/*
   EOT
 
   # Environment variables
   environment_variables = {
     ENV = "production"
+    NODE_ENV = "production"
   }
 
   # IAM service role
