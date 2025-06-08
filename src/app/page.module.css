@@ -6,11 +6,11 @@
   --button-primary-hover: #383838;
   --button-secondary-hover: #f2f2f2;
 
-  display: grid;
-  grid-template-rows: 20px 1fr 20px;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
   align-items: center;
-  justify-items: center;
-  min-height: 100svh;
+  background: linear-gradient(135deg, #ffd1dc, #87ceeb);
   padding: 80px;
   gap: 64px;
   font-family: var(--font-geist-sans);
@@ -28,10 +28,8 @@
 }
 
 .main {
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-  grid-row-start: 2;
+  text-align: center;
+  padding: 2rem;
 }
 
 .main ol {
@@ -165,4 +163,30 @@ a.secondary {
   .logo {
     filter: invert();
   }
+}
+
+.jellybeanText {
+  font-size: 4rem;
+  font-weight: bold;
+  background: linear-gradient(
+    45deg,
+    #FF6B6B,  /* Red jellybean */
+    #4ECDC4,  /* Turquoise jellybean */
+    #FFD93D,  /* Yellow jellybean */
+    #FF8B94,  /* Pink jellybean */
+    #95E1D3   /* Mint jellybean */
+  );
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: jellybeanGlow 8s ease infinite;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  letter-spacing: 4px;
+}
+
+@keyframes jellybeanGlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }

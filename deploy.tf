@@ -86,32 +86,47 @@ resource "aws_amplify_app" "web_app" {
   # Build settings
   build_spec = <<-EOT
     version: 1
-    frontend:
-      phases:
-        preBuild:
-          commands:
-            - npm ci
-        build:
-          commands:
-            - npm run build
-      artifacts:
-        baseDirectory: out
-        files:
-          - '**/*'
-      cache:
-        paths:
-          - node_modules/**/*
-          - .next/cache/**/*
+    applications:
+      - frontend:
+          phases:
+            preBuild:
+              commands:
+                - npm ci
+                - echo "Node version $(node -v)"
+                - echo "NPM version $(npm -v)"
+            build:
+              commands:
+                - echo "Starting Next.js build..."
+                - npm run build
+          artifacts:
+            baseDirectory: .next
+            files:
+              - '**/*'
+          cache:
+            paths:
+              - node_modules/**/*
+              - .next/cache/**/*
+    env:
+      variables:
+        NODE_OPTIONS: "--max-old-space-size=4096"
   EOT
 
   # Environment variables
   environment_variables = {
     ENV = "production"
     NODE_ENV = "production"
+    NEXT_TELEMETRY_DISABLED = "1"
   }
+
+  platform = "WEB"
 
   # IAM service role
   iam_service_role_arn = aws_iam_role.amplify_role.arn
+
+  # Custom build image
+  custom_headers = jsonencode({
+    "build-image" = "aws/codebuild/standard:7.0"
+  })
 }
 
 # Create a branch for the Amplify app
