@@ -1,12 +1,10 @@
-export function generateStaticParams() {
-  return [
-    { slug: 'christina' },
-    // Add more slugs here as needed
-  ];
-}
-
-export default async function BeanProfilePage({ params }: { params: { slug: string } }) {
+export default async function BeanProfilePage({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}) {
   const { slug } = await params;
+
   if (slug === "christina") {
     return (
       <>
