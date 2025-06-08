@@ -1,13 +1,29 @@
 import styles from "./page.module.css";
+import { getAllArticleSlugs, getArticle } from "@/utils/markdown";
 
-export default function Home() {
+export default async function Home() {
+  const articleSlugs = getAllArticleSlugs();
+  const articles = await Promise.all(
+    articleSlugs.map(async (slug) => await getArticle(slug))
+  );
+
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-        <h1 className={styles.jellybeanText}>HIELAUR TINA</h1>
-        <p className={styles.jellybeanText}>
-          wisebea.nz coming soon.
-        </p>
+        <div className={styles.articleList}>
+          <h2>Articles</h2>
+          <ul>
+            {articles.map((article) => 
+              article && (
+                <li key={article.slug}>
+                  <a href={`/article/${article.slug}`}>
+                    {article.frontmatter.title}
+                  </a>
+                </li>
+              )
+            )}
+          </ul>
+        </div>
       </main>
     </div>
   );

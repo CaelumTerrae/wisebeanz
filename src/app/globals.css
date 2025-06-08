@@ -1,3 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles can go below this line */
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
